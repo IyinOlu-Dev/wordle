@@ -9,9 +9,7 @@ app = FastAPI()
 class GuessRequest(BaseModel):
     guess: str
     word: str
-    
-    
-    
+
 @app.post("/")
 def guess(req: GuessRequest):
     game = GameMechanics(req.word, req.guess)
