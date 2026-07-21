@@ -336,6 +336,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "customtkinter" },
     { name = "fastapi" },
+    { name = "pyinstaller" },
     { name = "uvicorn" },
 ]
 
@@ -343,5 +344,6 @@ dependencies = [
 requires-dist = [
     { name = "customtkinter", specifier = ">=6.0.0" },
     { name = "fastapi", specifier = ">=0.139.2" },
+    { name = "pyinstaller", specifier = ">=6.21.0" },
     { name = "uvicorn", specifier = ">=0.51.0" },
 ]
