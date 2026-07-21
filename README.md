@@ -78,3 +78,6 @@ uv run pyinstaller --onedir --windowed --add-data "words.txt:." --icon icon.icns
 
 (Use `;` instead of `:` as the `--add-data` separator on Windows, and `icon.ico` instead of `icon.icns`.)
 
+**LICENSE
+
+**MIT
