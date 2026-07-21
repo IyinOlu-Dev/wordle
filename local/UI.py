@@ -131,7 +131,7 @@ def resource_path(relative_path):
     base_path = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
-with open("words.txt", "r") as file:
+with open(resource_path("words.txt"), "r") as file:
     lines = file.read().splitlines()
 
 random_word = random.choice(lines).lower()
