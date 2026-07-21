@@ -1,11 +1,9 @@
 name: Build Executables
-
 on:
   push:
     tags:
       - "v*"
   workflow_dispatch:
-
 jobs:
   build:
     strategy:
@@ -24,50 +22,46 @@ jobs:
             add_data_sep: ":"
             icon_flag: ""
             artifact_name: wordguesser-linux
-
     runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: local
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-
       - name: Install Linux Tk dependency
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y python3-tk
-
       - name: Install dependencies
         run: uv sync
-
       - name: Build executable
-        run: uv run pyinstaller --onefile --windowed --noupx --add-data "words.txt${{ matrix.add_data_sep }}." ${{ matrix.icon_flag }} UI.py
-
+        run: uv run pyinstaller --onedir --windowed --noupx --add-data "words.txt${{ matrix.add_data_sep }}." ${{ matrix.icon_flag }} UI.py
       - name: Package output
         shell: bash
         run: |
           cd dist
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
-            mv UI.exe ${{ matrix.artifact_name }}.exe
+            mv UI ${{ matrix.artifact_name }}
+            cd ${{ matrix.artifact_name }}
+            7z a -tzip ../${{ matrix.artifact_name }}.zip *
+            cd ..
+            rm -rf ${{ matrix.artifact_name }}
           elif [ "${{ matrix.os }}" = "macos-latest" ]; then
             mv UI.app ${{ matrix.artifact_name }}.app
             zip -r ${{ matrix.artifact_name }}.zip ${{ matrix.artifact_name }}.app
             rm -rf ${{ matrix.artifact_name }}.app
-            rm -f UI
           else
             mv UI ${{ matrix.artifact_name }}
+            zip -r ${{ matrix.artifact_name }}.zip ${{ matrix.artifact_name }}
+            rm -rf ${{ matrix.artifact_name }}
           fi
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: local/dist/${{ matrix.artifact_name }}*
-
+          path: local/dist/${{ matrix.artifact_name }}.zip
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -79,7 +73,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
